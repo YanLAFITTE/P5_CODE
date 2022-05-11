@@ -10,6 +10,7 @@ function addProducts(data) {
     const image = addImage(imageUrl, altTxt);
     const title = addTitle(name);
     const p = addParagraph(description);
+
     articleAppendChildElements(article, image, title, p);
     anchorAppendChildArticle(anchor, article);
   });
@@ -31,7 +32,7 @@ function anchorAppendChildArticle(anchor, article) {
 
 function addAnchor(id) {
   const anchor = document.createElement("a");
-  anchor.href = ".product.html?id=" + id;
+  anchor.href = "./product.html?id=" + id;
   return anchor;
 }
 
