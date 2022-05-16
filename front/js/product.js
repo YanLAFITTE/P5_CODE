@@ -17,45 +17,59 @@ function addElements(data) {
 }
 
 function addImage(imageUrl, altTxt) {
-  const image = document.createElement("img");
+  image = document.createElement("img");
   image.src = imageUrl;
   image.alt = altTxt;
 
   const item = document.querySelector(".item__img");
-  if (item != null) {
-    item.appendChild(image);
-  }
+  item.appendChild(image);
 }
 
 function addTitle(name) {
   const title = document.querySelector("#title");
-  if (title != null) {
-    title.textContent = name;
-  }
+  title.textContent = name;
 }
 
 function addPrice(price) {
   const span = document.querySelector("#price");
-  if (span != null) {
-    span.textContent = price;
-  }
+  span.textContent = price;
 }
 
 function addDescription(description) {
   const p = document.querySelector("#description");
-  if (p != null) {
-    p.textContent = description;
-  }
+  p.textContent = description;
 }
 
 function addColors(colors) {
   const select = document.querySelector("#colors");
-  if (select != null) {
-    colors.forEach((color) => {
-      const option = document.createElement("option");
-      option.value = color;
-      option.textContent = color;
-      select.appendChild(option);
-    });
-  }
+  colors.forEach((color) => {
+    const option = document.createElement("option");
+    option.value = color;
+    option.textContent = color;
+    select.appendChild(option);
+  });
 }
+
+const button = document.querySelector("#addToCart");
+button.addEventListener("click", (e) => {
+  const color = document.querySelector("#colors").value;
+  const quantity = document.querySelector("#quantity").value;
+  const price = document.querySelector("#price").textContent;
+  const title = document.querySelector("#title").textContent;
+  
+  if ((color == null, color === "", quantity == null, quantity == 0)) {
+    alert("Please select a color and quantity");
+  }
+
+  const product = {
+    id: id,
+    color: color,
+    quantity: Number(quantity),
+    price: Number(price),
+    imageUrl: image.src,
+    altTxt: image.alt,
+    title: title,
+  };
+
+  localStorage.setItem(id, JSON.stringify(product));
+});

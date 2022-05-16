@@ -24,10 +24,8 @@ function articleAppendChildElements(article, image, title, p) {
 
 function anchorAppendChildArticle(anchor, article) {
   const items = document.querySelector("#items");
-  if (items != null) {
-    items.appendChild(anchor);
-    anchor.appendChild(article);
-  }
+  items.appendChild(anchor);
+  anchor.appendChild(article);
 }
 
 function addAnchor(id) {
@@ -56,3 +54,8 @@ function addParagraph(description) {
   p.classList.add("productDescription");
   return p;
 }
+
+
+
+
+
