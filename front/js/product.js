@@ -7,7 +7,7 @@ fetch(`http://localhost:3000/api/products/${id}`)
   .then((data) => addElements(data));
 
 function addElements(data) {
-  const { imageUrl, altTxt, name, price, description, colors } = data;
+  let { imageUrl, altTxt, name, price, description, colors } = data;
 
   addImage(imageUrl, altTxt);
   addTitle(name);
@@ -62,13 +62,13 @@ function getColor() {
 
 const button = document.querySelector("#addToCart");
 button.addEventListener("click", (e) => {
-  const color = getColor();
-  const quantity = getQuantity();
-  const price = document.querySelector("#price").textContent;
-  const title = document.querySelector("#title").textContent;
+  let color = getColor();
+  let quantity = getQuantity();
+  let price = document.querySelector("#price").textContent;
+  let title = document.querySelector("#title").textContent;
 
   if (color == null || color === "" || quantity == null || quantity == 0) {
-    return alert("Please select a color and quantity");
+    return alert("Veuillez choisir la couleur et la quantité");
   } else {
     let product = {
       id: id,
@@ -82,27 +82,3 @@ button.addEventListener("click", (e) => {
     addToCart(product);
   }
 });
-
-function saveCart(cart) {
-  localStorage.setItem(id, JSON.stringify(cart));
-}
-
-function getCart() {
-  let cart = localStorage.getItem(id);
-  if (cart == null) {
-    return [];
-  } else {
-    return JSON.parse(cart);
-  }
-}
-
-function addToCart(product) {
-  let cart = getCart();
-  let foundColor = cart.find((p) => p.color == product.color);
-  if (foundColor != undefined) {
-    foundColor.quantity += product.quantity;
-  } else {
-    cart.push(product);
-  }
-  saveCart(cart);
-}
