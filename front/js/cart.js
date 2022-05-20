@@ -1,16 +1,5 @@
 const cart = [];
 
-function makeKey() {
-  let color = getColor();
-  const key = `${id}-${color}`;
-  return key;
-}
-
-function addToCart(product) {
-  let key = makeKey();
-  localStorage.setItem(key, JSON.stringify(product));
-}
-
 getFromCart();
 function getFromCart() {
   const numberOfItems = localStorage.length;
@@ -119,8 +108,25 @@ function makeArticle(item) {
   cartArticle.appendChild(divContent);
 
   displayArticle(cartArticle);
+  displayTotalQuantity(item);
+  displayTotalPrice();
+}
+
+function displayTotalQuantity(item) {
+  const totalItems = localStorage.length;
+  const totalQuantity = totalItems * item.quantity;
+  document.querySelector("#totalQuantity").textContent = totalQuantity;
+}
+
+function displayTotalPrice() {
+  let totalPrice = 0;
+  cart.forEach((item) => {
+    const totalPriceItem = item.price * item.quantity;
+    totalPrice += totalPriceItem;
+    document.querySelector("#totalPrice").textContent = totalPrice;
+  });
 }
 
 function displayArticle(cartArticle) {
-    document.querySelector("#cart__items").appendChild(cartArticle);
+  document.querySelector("#cart__items").appendChild(cartArticle);
 }
