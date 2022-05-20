@@ -82,3 +82,4 @@ button.addEventListener("click", (e) => {
     addToCart(product);
   }
 });
+
