@@ -60,16 +60,10 @@ function getColor() {
   return color;
 }
 
-function makeKey() {
-  let color = getColor();
-  const key = `${id}-${color}`;
-  return key;
-}
-
-function addToCart(product) {
-  let key = makeKey();
-  localStorage.setItem(key, JSON.stringify(product));
-}
+function addToCart(item) {
+    const key = `${item.id}-${item.color}`;
+    localStorage.setItem(key, JSON.stringify(item));
+  }
 
 const button = document.querySelector("#addToCart");
 button.addEventListener("click", (e) => {
@@ -93,4 +87,3 @@ button.addEventListener("click", (e) => {
     addToCart(product);
   }
 });
-
