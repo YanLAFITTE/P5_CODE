@@ -163,3 +163,87 @@ function displayTotalPrice() {
 function displayArticle(cartArticle) {
   document.querySelector("#cart__items").appendChild(cartArticle);
 }
+
+// ORDER
+
+const submitButton = document.querySelector("#order");
+submitButton.addEventListener("click", (e) => submitForm(e));
+function submitForm(e) {
+  e.preventDefault();
+  if (cart.length === 0) {
+    alert("Please select items!");
+    return;
+  }
+
+  if (validateForm() === true) return;
+  if (validateEmail() === true) return;
+
+  const body = submitBody();
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: {
+      "Content-type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      let orderId = data.orderId;
+      localStorage.clear();
+      localStorage.setItem("confirmOrder", JSON.stringify(orderId));
+      window.location = "confirmation.html";
+    })
+    .catch((err) => console.log(err));
+}
+
+function validateForm() {
+  const form = document.querySelector(".cart__order__form");
+  const inputs = form.querySelectorAll("input");
+  inputs.forEach((input) => {
+    if (input.value === "") {
+      alert("Please fill all the fields");
+      return true;
+    }
+    return false;
+  });
+}
+
+function validateEmail() {
+  const regex = /^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/;
+  const email = document.querySelector("#email").value;
+  if (regex.test(email) === false) {
+    alert("Please enter valid email");
+    return true;
+  }
+  return false;
+}
+
+function submitBody() {
+  const form = document.querySelector(".cart__order__form");
+  const firstName = form.elements.firstName.value;
+  const lastName = form.elements.lastName.value;
+  const address = form.elements.address.value;
+  const city = form.elements.city.value;
+  const email = form.elements.email.value;
+  const body = {
+    contact: {
+      firstName: firstName,
+      lastName: lastName,
+      address: address,
+      city: city,
+      email: email,
+    },
+    products: getProductId(),
+  };
+  return body;
+}
+function getProductId() {
+  const products = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const foundKey = localStorage.key(i);
+    console.log(i);
+    const id = foundKey.split("-")[0];
+    products.push(id);
+  }
+  return products;
+}
