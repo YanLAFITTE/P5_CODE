@@ -1,7 +1,9 @@
+// Request to the api to get data
 fetch("http://localhost:3000/api/products")
   .then((res) => res.json())
   .then((data) => addProducts(data));
 
+// Make couch product with data in order to display
 function addProducts(data) {
   data.forEach((couch) => {
     const { _id, imageUrl, altTxt, name, description } = couch;
@@ -16,12 +18,14 @@ function addProducts(data) {
   });
 }
 
+// Add the elements to the article
 function articleAppendChildElements(article, image, title, p) {
   article.appendChild(image);
   article.appendChild(title);
   article.appendChild(p);
 }
 
+// Add the article to the anchor
 function anchorAppendChildArticle(anchor, article) {
   const items = document.querySelector("#items");
   items.appendChild(anchor);
@@ -54,8 +58,3 @@ function addParagraph(description) {
   p.classList.add("productDescription");
   return p;
 }
-
-
-
-
-

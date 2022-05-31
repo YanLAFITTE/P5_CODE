@@ -1,14 +1,14 @@
 const cart = [];
 
+/** Retrieve elements from local storage by sorting it for display. */
 getCart();
-
 function getCart() {
-  for (let i = 0; i < localStorage.length; i++) {
-    const foundKey = localStorage.key(i);
-    const object = JSON.parse(localStorage.getItem(foundKey));
-    cart.push(object);
+  for (i = 0; i < localStorage.length; i++) {
+    const obj = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    cart.push(obj);
+    cart.sort((a, b) => (a.id > b.id ? 1 : -1));
   }
-  cart.forEach((object) => makeArticle(object));
+  cart.forEach((item) => makeArticle(item));
 }
 
 function addCartArticle(item) {
@@ -83,6 +83,8 @@ function addSettings(item) {
   inputQuantity.min = "1";
   inputQuantity.max = "100";
   inputQuantity.value = item.quantity;
+
+  /** Listen for the click on the quantity element. */
   inputQuantity.addEventListener("change", () =>
     updateValue(item, inputQuantity.value)
   );
@@ -90,6 +92,8 @@ function addSettings(item) {
 
   const divDelete = document.createElement("div");
   divDelete.classList.add("cart__item__content__settings__delete");
+
+  /** Listen for the click on the delete element. */
   divDelete.addEventListener("click", () => deleteItem(item));
   divSettings.appendChild(divDelete);
 
@@ -101,6 +105,7 @@ function addSettings(item) {
   return divSettings;
 }
 
+/** Update product quantity and price. */
 function updateValue(item, inputQuantity) {
   let foundKey = cart.find((p) => p.id == item.id && p.color == item.color);
   foundKey.quantity = Number(inputQuantity);
@@ -109,11 +114,13 @@ function updateValue(item, inputQuantity) {
   displayTotalPrice();
 }
 
+/** Add product to local storage. */
 function addToCart(item) {
   const key = `${item.id}-${item.color}`;
   localStorage.setItem(key, JSON.stringify(item));
 }
 
+/** Remove the element from the dom and the local storage. */
 function deleteItem(item) {
   let key = `${item.id}-${item.color}`;
   localStorage.removeItem(key);
@@ -129,6 +136,7 @@ function deleteItem(item) {
   displayTotalPrice();
 }
 
+/** Make and display the article. */
 function makeArticle(item) {
   const cartArticle = addCartArticle(item);
 
@@ -143,6 +151,7 @@ function makeArticle(item) {
   displayTotalPrice();
 }
 
+/** Calculation of the quantity to be displayed. */
 function displayTotalQuantity() {
   let totalQuantity = 0;
   cart.forEach((item) => {
@@ -151,6 +160,7 @@ function displayTotalQuantity() {
   });
 }
 
+/** Calculation of the price to be displayed. */
 function displayTotalPrice() {
   let totalPrice = 0;
   cart.forEach((item) => {
@@ -164,21 +174,27 @@ function displayArticle(cartArticle) {
   document.querySelector("#cart__items").appendChild(cartArticle);
 }
 
-// ORDER
+// ********* ORDER FORM ********* //
 
+/** Listen to the click on the submit button. */
 const submitButton = document.querySelector("#order");
 submitButton.addEventListener("click", (e) => submitForm(e));
 function submitForm(e) {
   e.preventDefault();
   if (cart.length === 0) {
-    alert("Please select items!");
+    alert("Votre panier est vide !");
     return;
   }
 
-  if (validateForm() === true) return;
+  if (validateFirstName() === true) return;
+  if (validateLastName() === true) return;
+  if (validateAddress() === true) return;
+  if (validateCity() === true) return;
   if (validateEmail() === true) return;
 
   const body = submitBody();
+
+  /** API request to send data. */
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
     body: JSON.stringify(body),
@@ -190,34 +206,77 @@ function submitForm(e) {
     .then((data) => {
       let orderId = data.orderId;
       localStorage.clear();
+
+      /** Set confirm order id to local storage. */
       localStorage.setItem("confirmOrder", JSON.stringify(orderId));
+
+      /** Redirects to the confirmation page. */
       window.location = "confirmation.html";
     })
     .catch((err) => console.log(err));
 }
 
-function validateForm() {
-  const form = document.querySelector(".cart__order__form");
-  const inputs = form.querySelectorAll("input");
-  inputs.forEach((input) => {
-    if (input.value === "") {
-      alert("Please fill all the fields");
-      return true;
-    }
-    return false;
-  });
+function validateFirstName() {
+  const regex = /^[a-zA-ZÀ-ÿ-. ]+$/;
+  const firstName = document.querySelector("#firstName").value;
+  if (regex.test(firstName) === false) {
+    document.querySelector("#firstNameErrorMsg").textContent =
+      "Veuillez entrer un prenom valide.";
+    return true;
+  } else {
+    document.querySelector("#firstNameErrorMsg").textContent = "";
+  }
+}
+
+function validateLastName() {
+  const regex = /^[a-zA-ZÀ-ÿ-. ]+$/;
+  const lastName = document.querySelector("#lastName").value;
+  if (regex.test(lastName) === false) {
+    document.querySelector("#lastNameErrorMsg").textContent =
+      "Veuillez entrer un nom valide.";
+    return true;
+  } else {
+    document.querySelector("#lastNameErrorMsg").textContent = "";
+  }
+}
+
+function validateAddress() {
+  const regex = /^[#.0-9a-zA-ZÀ-ÿ-. \s,-]+$/;
+  const address = document.querySelector("#address").value;
+  if (regex.test(address) === false) {
+    document.querySelector("#addressErrorMsg").textContent =
+      "Veuillez entrer une adresse valide.";
+    return true;
+  } else {
+    document.querySelector("#addressErrorMsg").textContent = "";
+  }
+}
+
+function validateCity() {
+  const regex = /^[a-zA-ZÀ-ÿ-. ]+$/;
+  const city = document.querySelector("#city").value;
+  if (regex.test(city) === false) {
+    document.querySelector("#cityErrorMsg").textContent =
+      "Veuillez entrer une ville valide.";
+    return true;
+  } else {
+    document.querySelector("#cityErrorMsg").textContent = "";
+  }
 }
 
 function validateEmail() {
   const regex = /^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/;
   const email = document.querySelector("#email").value;
   if (regex.test(email) === false) {
-    alert("Please enter valid email");
+    document.querySelector("#emailErrorMsg").textContent =
+      "Veuillez entrer un email valide.";
     return true;
+  } else {
+    document.querySelector("#emailErrorMsg").textContent = "";
   }
-  return false;
 }
 
+/** Prepare the body for the request. */
 function submitBody() {
   const form = document.querySelector(".cart__order__form");
   const firstName = form.elements.firstName.value;
@@ -237,13 +296,16 @@ function submitBody() {
   };
   return body;
 }
+
+/** Prepare an array of ids. */
 function getProductId() {
-  const products = [];
+  let products = [];
+
   for (let i = 0; i < localStorage.length; i++) {
-    const foundKey = localStorage.key(i);
-    console.log(i);
-    const id = foundKey.split("-")[0];
-    products.push(id);
+    const obj = localStorage.getItem(localStorage.key(i));
+    const object = JSON.parse(obj);
+    const objectId = object.id;
+    products.push(objectId);
   }
   return products;
 }
