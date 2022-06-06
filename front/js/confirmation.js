@@ -5,5 +5,6 @@ function getConfirmOrder() {
 
 const confirmOrder = getConfirmOrder();
 const orderId = document.querySelector("#orderId");
-orderId.textContent = confirmOrder + " Merci pour votre commande !";
+orderId.innerHTML= "<br/>" + confirmOrder + "<br/>" + "Merci pour votre commande !";
+
 localStorage.clear();

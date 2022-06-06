@@ -75,6 +75,7 @@ function addToCart(item) {
   } else {
     localStorage.setItem(key, JSON.stringify(item));
   }
+  return alert("Produit ajouté au panier !");
 }
 
 /** Listen to the click on the add to cart button. */
