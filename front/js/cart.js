@@ -8,6 +8,12 @@ function getCart() {
     cart.push(obj);
     cart.sort((a, b) => (a.id > b.id ? 1 : -1));
   }
+  if (cart === null || cart.length == 0) {
+    document.querySelector("#cartAndFormContainer > h1").textContent +=
+      " est vide !";
+    document.querySelector("#totalQuantity").textContent = 0;
+    document.querySelector("#totalPrice").textContent = 0;
+  }
   cart.forEach((item) => makeArticle(item));
 }
 
@@ -154,6 +160,11 @@ function makeArticle(item) {
 /** Calculation of the quantity to be displayed. */
 function displayTotalQuantity() {
   let totalQuantity = 0;
+  if (cart === null || cart.length == 0) {
+    document.querySelector("#totalQuantity").textContent = 0;
+    document.querySelector("#cartAndFormContainer > h1").textContent +=
+      " est vide !";
+  }
   cart.forEach((item) => {
     totalQuantity += item.quantity;
     document.querySelector("#totalQuantity").textContent = totalQuantity;
@@ -163,6 +174,9 @@ function displayTotalQuantity() {
 /** Calculation of the price to be displayed. */
 function displayTotalPrice() {
   let totalPrice = 0;
+  if (cart === null || cart.length == 0) {
+    document.querySelector("#totalPrice").textContent = 0;
+  }
   cart.forEach((item) => {
     let totalPriceItem = item.price * item.quantity;
     totalPrice += totalPriceItem;
