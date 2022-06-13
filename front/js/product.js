@@ -5,11 +5,12 @@ const id = paramsId.get("id");
 /** Request for product data using the id. */
 fetch(`http://localhost:3000/api/products/${id}`)
   .then((res) => res.json())
-  .then((data) => addElements(data));
+  .then((data) => addElements(data))
+  .catch((err) => console.error(err));
 
 /** Add data to dom elements. */
 function addElements(data) {
-  let { imageUrl, altTxt, name, price, description, colors } = data;
+  const { imageUrl, altTxt, name, price, description, colors } = data;
 
   addImage(imageUrl, altTxt);
   addTitle(name);
@@ -81,15 +82,15 @@ function addToCart(item) {
 /** Listen to the click on the add to cart button. */
 const button = document.querySelector("#addToCart");
 button.addEventListener("click", (e) => {
-  let color = getColor();
-  let quantity = getQuantity();
-  let price = document.querySelector("#price").textContent;
-  let title = document.querySelector("#title").textContent;
+  const color = getColor();
+  const quantity = getQuantity();
+  const price = document.querySelector("#price").textContent;
+  const title = document.querySelector("#title").textContent;
 
-  if (color == null || color === "" || quantity == null || quantity == 0) {
+  if (color == null || color === "" || quantity == null || quantity <= 0) {
     return alert("Veuillez choisir la couleur et la quantité");
   } else {
-    let product = {
+    const product = {
       id: id,
       color: color,
       quantity: Number(quantity),

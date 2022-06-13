@@ -3,7 +3,7 @@ const cart = [];
 /** Retrieve elements from local storage by sorting it for display. */
 getCart();
 function getCart() {
-  for (i = 0; i < localStorage.length; i++) {
+  for (let i = 0; i < localStorage.length; i++) {
     const obj = JSON.parse(localStorage.getItem(localStorage.key(i)));
     cart.push(obj);
     cart.sort((a, b) => (a.id > b.id ? 1 : -1));
@@ -94,6 +94,7 @@ function addSettings(item) {
   inputQuantity.addEventListener("change", () =>
     updateValue(item, inputQuantity.value)
   );
+
   divQuantity.appendChild(inputQuantity);
 
   const divDelete = document.createElement("div");
@@ -113,7 +114,7 @@ function addSettings(item) {
 
 /** Update product quantity and price. */
 function updateValue(item, inputQuantity) {
-  let foundKey = cart.find((p) => p.id == item.id && p.color == item.color);
+  const foundKey = cart.find((p) => p.id == item.id && p.color == item.color);
   foundKey.quantity = Number(inputQuantity);
   addToCart(foundKey);
   displayTotalQuantity();
@@ -128,7 +129,7 @@ function addToCart(item) {
 
 /** Remove the element from the dom and the local storage. */
 function deleteItem(item) {
-  let key = `${item.id}-${item.color}`;
+  const key = `${item.id}-${item.color}`;
   localStorage.removeItem(key);
   const removeArticle = document.querySelector(
     `[data-id="${item.id}"][data-color="${item.color}"]`
@@ -166,8 +167,12 @@ function displayTotalQuantity() {
       " est vide !";
   }
   cart.forEach((item) => {
-    totalQuantity += item.quantity;
-    document.querySelector("#totalQuantity").textContent = totalQuantity;
+    if (item.quantity > 0) {
+      totalQuantity += item.quantity;
+      document.querySelector("#totalQuantity").textContent = totalQuantity;
+    } else {
+      deleteItem(item);
+    }
   });
 }
 
@@ -178,7 +183,7 @@ function displayTotalPrice() {
     document.querySelector("#totalPrice").textContent = 0;
   }
   cart.forEach((item) => {
-    let totalPriceItem = item.price * item.quantity;
+    const totalPriceItem = item.price * item.quantity;
     totalPrice += totalPriceItem;
     document.querySelector("#totalPrice").textContent = totalPrice;
   });
@@ -200,11 +205,11 @@ function submitForm(e) {
     return;
   }
 
-  if (validateFirstName() === true) return;
-  if (validateLastName() === true) return;
-  if (validateAddress() === true) return;
-  if (validateCity() === true) return;
-  if (validateEmail() === true) return;
+  if (invalidFirstName() === true) return;
+  if (invalidLastName() === true) return;
+  if (invalidAddress() === true) return;
+  if (invalidCity() === true) return;
+  if (invalidEmail() === true) return;
 
   const body = submitBody();
 
@@ -218,7 +223,7 @@ function submitForm(e) {
   })
     .then((res) => res.json())
     .then((data) => {
-      let orderId = data.orderId;
+      const orderId = data.orderId;
       localStorage.clear();
 
       /** Set confirm order id to local storage. */
@@ -227,10 +232,10 @@ function submitForm(e) {
       /** Redirects to the confirmation page. */
       window.location = "confirmation.html";
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.error(err));
 }
 
-function validateFirstName() {
+function invalidFirstName() {
   const regex = /^[a-zA-ZÀ-ÿ-. ]+$/;
   const firstName = document.querySelector("#firstName").value;
   if (regex.test(firstName) === false) {
@@ -242,7 +247,7 @@ function validateFirstName() {
   }
 }
 
-function validateLastName() {
+function invalidLastName() {
   const regex = /^[a-zA-ZÀ-ÿ-. ]+$/;
   const lastName = document.querySelector("#lastName").value;
   if (regex.test(lastName) === false) {
@@ -254,7 +259,7 @@ function validateLastName() {
   }
 }
 
-function validateAddress() {
+function invalidAddress() {
   const regex = /^[#.0-9a-zA-ZÀ-ÿ-. \s,-]+$/;
   const address = document.querySelector("#address").value;
   if (regex.test(address) === false) {
@@ -266,7 +271,8 @@ function validateAddress() {
   }
 }
 
-function validateCity() {
+function invalidCity() {
+  //invalidcity
   const regex = /^[a-zA-ZÀ-ÿ-. ]+$/;
   const city = document.querySelector("#city").value;
   if (regex.test(city) === false) {
@@ -278,7 +284,7 @@ function validateCity() {
   }
 }
 
-function validateEmail() {
+function invalidEmail() {
   const regex = /^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/;
   const email = document.querySelector("#email").value;
   if (regex.test(email) === false) {
@@ -313,7 +319,7 @@ function submitBody() {
 
 /** Prepare an array of ids. */
 function getProductId() {
-  let products = [];
+  const products = [];
 
   for (let i = 0; i < localStorage.length; i++) {
     const obj = localStorage.getItem(localStorage.key(i));
